@@ -2,6 +2,7 @@
   "expo": {
     "name": "ArTour",
     "slug": "ArTour",
+    "owner": "mina1811",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
