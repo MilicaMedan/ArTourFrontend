@@ -1,60 +1,83 @@
 import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Image, View, Platform, TouchableOpacity, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { Camera } from 'expo-camera';
 import { connect } from 'react-redux';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
+import Expo from 'expo';
+
 
 function  AddTab(props) {
     
     const [image, setImage] = useState(null);
-    useEffect(() => {
+ /*   useEffect(() => {
         (async () => {
         if (Platform.OS !== //'web'
             'android'
             ) {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (status !== 'granted') {
-                alert('Sorry, we need camera roll permissions to make this work!');
-            }
+              const { status } = await Camera.requestPermissionsAsync();
+              setHasPermission(status === 'granted');
         }
         })();
     }, []);
-
+*/
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: [ImagePicker.MediaTypeOptions.Images],
+        let result = await DocumentPicker.getDocumentAsync({});
+        console.log(result);
+        //var base64File= await FileSystem.readAsStringAsync(result.uri, { encoding: 'base64'  });
+
+        //console.log(base64File);
+        /*
+        await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: [ImagePicker.MediaTypeOptions.All],
         allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+        //aspect: [4, 3],
+        //quality: 1,
         base64 : true,
         
         });
-
-        if (!result.cancelled) {
-            var str = ''+result.base64;
+        */
+        if (true) {
+          /*
+            var str = base64File;
             var uri = ''+result.uri;
-            var spl_name= uri.split("/");
-            var name= spl_name[spl_name.length-1];
+            var name= result.name;
+            */
+            const obj = new FormData();
 
-            var imguri='data:image/png;base64,'+result.base64;
-            setImage(imguri);
-            console.log(name);
+            obj.append('file', {
+                uri: result.uri,
+                type: result.type,
+                name: result.name
+            });
+            
+            //var imguri='data:image/png;base64,'+base64File;
+            setImage(result.uri);
+            console.log(result.name);
             fetch('http://192.168.100.14:8080/uploadFile', {
               method: 'POST',
               headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
+                //Accept: 'application/json',
+                //'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data',
                 'Authorization': 'Bearer '+ props.jwt
               },
-              timeout: 600000,
-              body: JSON.stringify({
+
+
+              body: 
+              obj
+              /*
+               JSON.stringify({
                 username: str,
-                password: name,
-              }
-              ),
+                name: name,
+              }),
+              */
             })
             .then((response) => {
               console.log(response.status);
-            });
+            })
+            .catch((error) => console.log(error));
 
  
         }
