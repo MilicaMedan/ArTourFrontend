@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, ImageBackground, TouchableOpacity  } from 'react-native';
 import { Input } from 'react-native-elements';
 import {Formik} from 'formik'
-import {changeUserCredentials} from '../reducers/dataReducer'
+import {changeUserCredentials, changeUserSettings} from '../reducers/dataReducer'
 import { connect } from 'react-redux';
 
 class Login extends Component {
@@ -15,7 +15,6 @@ class Login extends Component {
 
 
   log = (userData) => {
-   // this.props.navigation.navigate('Main');
     fetch('http://192.168.100.14:8080/authenticate', {
         method: 'POST',
         headers: {
@@ -36,9 +35,10 @@ class Login extends Component {
       {
         if (response.jwt!= null)
         {
-          //localStorage.setItem('jwt',response.jwt);
-          data = {...response, jwt: response.jwt}
+          var data = {...response, jwt: response.jwt}
           this.changeUserCredentials(data);
+          var data = {...response, settings: response.settings}
+          this.changeUserSettings(data);
           this.props.navigation.navigate('Main');
           return true;
         }
@@ -53,6 +53,11 @@ class Login extends Component {
   changeUserCredentials(data)
   {
       this.props.dispatch({type: changeUserCredentials, payload: data})
+  }
+
+  changeUserSettings(data)
+  {
+      this.props.dispatch({type: changeUserSettings, payload: data})
   }
 
   render(){
@@ -73,7 +78,7 @@ class Login extends Component {
                                 value={props.values.username}/>
                             <Input  placeholder='password' secureTextEntry={true}  errorStyle={{ color: 'red' }} errorMessage=''  style={{marginTop: 50}} onChangeText={props.handleChange('password')}
                                 value={props.values.password}/>
-                            <Text style={{marginTop:50, color:'#828A8A' }}>You don't have account?  <Text style={{color:'#CA6F1E'}} onPress = {() => navigation.navigate('Signup')}>Sign up.</Text></Text>
+                            <Text style={{marginTop:50, color:'#828A8A' }}>You don't have account?  <Text style={{color:'#CA6F1E'}} onPress = {() => this.props.navigation.navigate('Signup')}>Sign up.</Text></Text>
                             <TouchableOpacity style={styles.loginBtn} onPress = {props.handleSubmit}>
                                 <Text style={{color:'#D7DBDD', fontWeight: 'bold', fontSize:25}}>Login</Text>
                             </TouchableOpacity>

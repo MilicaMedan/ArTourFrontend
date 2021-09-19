@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Main from './pages/Main';
+import Settings from './pages/Settings';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import {dataReducer} from './reducers/dataReducer'
@@ -19,6 +20,7 @@ function App() {
         <Stack.Screen name="Login" component={Login}/>
         <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen name="Main" component={Main} />
+        <Stack.Screen name="Settings" component={Settings} />
       </Stack.Navigator>
     </NavigationContainer>
     </Provider>

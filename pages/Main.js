@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import HomeTab from './HomeTab';
 import ProfileTab from './ProfileTab';
 import AddTab from './AddTab';
+import HeaderComponent from '../components/HeaderComponent';
+
 import { connect } from 'react-redux';
 
 
@@ -17,7 +19,11 @@ class Main extends Component {
   };
     render(){
         return (
-             <AppTabsScreen/>
+          <View style= {{height:'100%',flexDirection: "column"}}>
+            <HeaderComponent/>
+            <AppTabsScreen/>
+          </View>
+            
           );
     }
 }
@@ -26,7 +32,7 @@ const AppTabs = createBottomTabNavigator();
 const AppTabsScreen = () => (
   <AppTabs.Navigator 
   
-  tabBarOptions={{ showLabel:false, activeBackgroundColor:"#B9770E", inactiveBackgroundColor:"#F9E79F" }}>
+  tabBarOptions={{ showLabel:false, activeBackgroundColor:"#D7DBDD", inactiveBackgroundColor:"#F8C471"}}>
     <AppTabs.Screen
       name="HomeTab"
       component={HomeTab}
