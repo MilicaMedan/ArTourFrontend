@@ -9,6 +9,8 @@ import Expo from 'expo';
 import { Video } from 'expo-av'
 import VideoPlayer from 'expo-video-player'
 import { useIsFocused } from "@react-navigation/core";
+import {serverUrl} from '../serverSettings/serverSettings';
+import {styles} from '../styles/add';
 
 
 function  AddTab(props) {
@@ -95,7 +97,7 @@ function  AddTab(props) {
             console.log(xhr.headers);
           }
       };
-      xhr.open("POST", 'http://192.168.100.14:8080/uploadFile');
+      xhr.open("POST", serverUrl+'/uploadFile');
       xhr.setRequestHeader('Authorization', 'Bearer '+ props.jwt);
       xhr.send(data);
 
@@ -105,8 +107,8 @@ function  AddTab(props) {
     if(data == null){
       return (
         <View style={styles.container}>
-          <TouchableOpacity style={styles.loginBtn} onPress = {pickImage}>
-                <Text style={{color:'#D7DBDD', fontWeight: 'bold', fontSize:25}}>Pick an image from camera roll</Text>
+          <TouchableOpacity style={styles.btn} onPress = {pickImage}>
+                <Text style={{color:'#D7DBDD', fontWeight: 'bold', fontSize:25}}>Pick a file from galery</Text>
            </TouchableOpacity>
         </View>
       );
@@ -137,7 +139,7 @@ function  AddTab(props) {
                         },
                     }}
                     />}
-          <TouchableOpacity style={styles.loginBtn} onPress = {save}>
+          <TouchableOpacity style={styles.btn} onPress = {save}>
                 <Text style={{color:'#D7DBDD', fontWeight: 'bold', fontSize:25}}>Save</Text>
            </TouchableOpacity>
           
@@ -151,25 +153,3 @@ const mapStateToProps = (state) => {
   };
   
 export default connect(mapStateToProps)(AddTab)
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-       // flexDirection: "column",
-        backgroundColor: "#D7DBDD",
-        alignItems: "center",
-      },
-    loginBtn:{
-        width: '100%',
-        height:50,
-        marginTop: 50,
-        alignSelf: "center",
-        backgroundColor: '#535757',
-        borderRadius: 25,
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    
-    
-  }
-  );

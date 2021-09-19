@@ -63,15 +63,5 @@ const AppTabsScreen = () => (
   </AppTabs.Navigator>
 );
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-       // flexDirection: "column",
-        backgroundColor: "#D7DBDD",
-        alignItems: "center",
-        justifyContent: "center"
-      }
-  }
-  );
 
 export default connect() (Main);

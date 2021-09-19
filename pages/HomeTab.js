@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, ImageBackground, TouchableOpacity, ScrollView , Button } from 'react-native';
 import VoteComponent from '../components/CardComponent';
 import { Rating, AirbnbRating } from 'react-native-elements';
-
+import {serverUrl} from '../serverSettings/serverSettings'
 import { Video } from 'expo-av'
 import VideoPlayer from 'expo-video-player'
 import { Buffer } from "buffer";
 import { useIsFocused } from "@react-navigation/core";
-
+import {styles} from '../styles/home';
 
 import { connect } from 'react-redux';
 
@@ -18,6 +18,9 @@ function  HomeTab(props)  {
 
     useEffect(() => {
         if (isFocused) {
+            return () => {
+                setImages(null);
+              };
         }else {
             return () => {
                 setImages(null);
@@ -28,7 +31,7 @@ function  HomeTab(props)  {
 
     const loadImages = async () => {
         var imagess = await fetch(
-            'http://192.168.100.14:8080/getPosts',
+            serverUrl+'/getPosts',
             {
                 method: 'GET',
                 headers: {
@@ -49,7 +52,10 @@ function  HomeTab(props)  {
         }
     }
 
-    loadImages();
+    //loadImages();
+    if(images == null && isFocused == true){
+        loadImages();
+    }
     
 
     if(images != null){
@@ -62,13 +68,17 @@ function  HomeTab(props)  {
                     <Text key= {images[i].username+''+images[i].id} style={{height: 30, marginTop: 50, marginBottom:5, fontSize: 20, fontWeight: 'bold', color: '#7B7D7D'}}>{images[i].username}</Text>,
                     <Image 
                     key = {images[i].name} 
-                    source={{ uri: 'http://192.168.100.14:8080/image/?name='+images[i].name}} 
+                    source={{ uri: serverUrl+'/image/?name='+images[i].name}} 
                     style={{width: 300, height: 300, marginBottom: 0 }} 
                     />,
                     <VoteComponent key = {images[i].id} id = {images[i].id} jwt={props.jwt} israted={images[i].ratedByYou} averageMark = {images[i].averageMark} ></VoteComponent>,
 
                 );
             }else if (dataType == "mp3" || dataType == "ogg" || dataType == "m4a"){
+                var isPlaying = false;
+                if(props.settings == 1 || (props.settings == 2 && images[i].averageMark > 4)){
+                    isPlaying = true;
+                }
                 elements.push(
                     <Text key= {images[i].username+''+images[i].id} style={{height: 30, marginTop: 50, marginBottom:5, fontSize: 20, fontWeight: 'bold', color: '#7B7D7D'}}>{images[i].username}</Text>,
                     <VideoPlayer
@@ -76,9 +86,9 @@ function  HomeTab(props)  {
                     style={{width: 300, height: 300, marginBottom: 0 }}
                     videoProps={{
                         dataType: "audio/mp3",
-                        shouldPlay: false,
+                        shouldPlay: isPlaying,
                         resizeMode: Video.RESIZE_MODE_CONTAIN,
-                        source: {uri: 'http://192.168.100.14:8080/audio/?name='+images[i].name},
+                        source: {uri: serverUrl+'/audio/?name='+images[i].name},
                         posterSource: require('../pictures/suncokreti.jpg'),
                         posterStyle: {width: 400, height: 400 }
                     }}
@@ -86,15 +96,19 @@ function  HomeTab(props)  {
                     <VoteComponent key = {images[i].id} id = {images[i].id} jwt={props.jwt} israted={images[i].ratedByYou} averageMark = {images[i].averageMark}></VoteComponent>
                 );
             }else if(dataType == "mp4"){
-                <Text key= {images[i].username+''+images[i].id} style={{height: 30, marginTop: 50, marginBottom:5, fontSize: 20, fontWeight: 'bold', color: '#7B7D7D'}}>{images[i].username}</Text>,
+                var isPlaying = false;
+                if(props.settings == 1 || (props.settings == 2 && images[i].averageMark > 4)){
+                    isPlaying = true;
+                }
                 elements.push(
+                    <Text key= {images[i].username+''+images[i].id} style={{height: 30, marginTop: 50, marginBottom:5, fontSize: 20, fontWeight: 'bold', color: '#7B7D7D'}}>{images[i].username}</Text>,
                     <VideoPlayer
                     key = {images[i].name}
                     style={{width: 300, height: 300, marginBottom: 0 }}
                     videoProps={{
-                        shouldPlay: false,
+                        shouldPlay: isPlaying,
                         resizeMode: Video.RESIZE_MODE_CONTAIN,
-                        source: {uri: 'http://192.168.100.14:8080/video/?name='+images[i].name},
+                        source: {uri: serverUrl+'/video/?name='+images[i].name},
                     }}
                     />,
                     <VoteComponent key = {images[i].id} id = {images[i].id} jwt={props.jwt} israted={images[i].ratedByYou} averageMark = {images[i].averageMark}></VoteComponent>
@@ -124,34 +138,3 @@ const mapStateToProps = (state) => {
   
 export default connect(mapStateToProps)(HomeTab)
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: "column",
-        backgroundColor: "#D7DBDD",
-    },
-    container1: {
-        flex: 1,
-        flexDirection: "column",
-        backgroundColor: "#D7DBDD",
-        alignItems: 'flex-start',
-        marginLeft: 50,
-        marginTop: 20
-    },
-    card: {
-        backgroundColor: "#FDFEFE",
-        height : 300,
-        width : "100%"
-        },
-    loginBtn:{
-        width: "100%",
-        height:50,
-        marginTop: 50,
-        alignSelf: "center",
-        backgroundColor: "#535757",
-        borderRadius: 25,
-        alignItems: "center",
-        justifyContent: "center"
-    },
-  }
-  );

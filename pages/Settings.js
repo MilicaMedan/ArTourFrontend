@@ -2,6 +2,8 @@ import React, { Component, useState } from 'react';
 import { View, Text, StyleSheet, Image, ImageBackground, TouchableOpacity  } from 'react-native';
 import { changeUserSettings} from '../reducers/dataReducer'
 import {Picker} from '@react-native-picker/picker';
+import {serverUrl} from '../serverSettings/serverSettings';
+import {styles} from '../styles/settings';
 import { connect } from 'react-redux';
 
 
@@ -10,7 +12,7 @@ function  Settings(props)  {
   const [settings, setSettings] = useState(props.settings);
 
   const changeSettings = () => {
-    fetch('http://192.168.100.14:8080/changeSettings', {
+    fetch(serverUrl+'/changeSettings', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -69,7 +71,7 @@ function  Settings(props)  {
             <Picker.Item label="Play" value="1" />
             <Picker.Item label="Play with best mark" value="2" />
         </Picker>
-        <TouchableOpacity style={styles.loginBtn} onPress = {changeSettings}>
+        <TouchableOpacity style={styles.save} onPress = {changeSettings}>
             <Text style={{color:'#D7DBDD', fontWeight: 'bold', fontSize:25}}>Save settings</Text>
         </TouchableOpacity>
     </View>
@@ -78,20 +80,7 @@ function  Settings(props)  {
 }
 
 
-const styles = StyleSheet.create({
-    loginBtn:{
-        width: '70%',
-        height:50,
-        marginTop: 50,
-        alignSelf: "center",
-        backgroundColor: '#7B7D7D',
-        borderRadius: 25,
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 100
-    },
-  }
-  );
+
 
   const mapStateToProps = (state) => {
     return  { jwt: state.userData.jwt, settings: state.userSettings.settings}

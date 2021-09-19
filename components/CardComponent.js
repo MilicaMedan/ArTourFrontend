@@ -1,21 +1,20 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, ImageBackground, TouchableOpacity } from 'react-native';
 import { Rating, AirbnbRating } from 'react-native-elements';
+import {serverUrl} from '../serverSettings/serverSettings'
 
-class VoteComponent extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    handleClick(rating) {
+function  VoteComponent(props)  {
+  const [rated, setRated] = useState(props.israted);
+  const [averageMark, setAverageMark] = useState(props.averageMark);
+    const handleClick = (rating) => {
         var mark = rating;
-        var id = this.props.id;
-        fetch('http://192.168.100.14:8080/uploadMark', {
+        var id = props.id;
+        fetch(serverUrl+'/uploadMark', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer '+ this.props.jwt
+          'Authorization': 'Bearer '+ props.jwt
         },
         body: JSON.stringify({
           id: 0,
@@ -24,16 +23,24 @@ class VoteComponent extends React.Component {
           post_id: id,
         }),
       }).then((response) => {
-          console.log(response.status);
         if (response.status == 200) {
-        } 
+          console.log("200");
+          return response.json();
+        } else {
+          return "fail";
+        }
+      }).then((response) => {
+        if(response != "fail"){
+          setRated(true);
+          setAverageMark(response);
+        }
+        
       });
 
     }
 
-    render(){
-        if(this.props.israted){
-            return (<Text style= {{height: 50}}>Rating: {this.props.averageMark}</Text>);
+        if(rated){
+            return (<Text style= {{height: 50}}>Rating: {averageMark}</Text>);
         }else{
             return (
                 <AirbnbRating
@@ -41,21 +48,13 @@ class VoteComponent extends React.Component {
                     reviews={["Bad", "OK", "Good","Very Good", "Wow", "Amazing"]}
                     defaultRating={0}
                     size={15}
-                    key = {this.props}
-                    onFinishRating={(rating) => this.handleClick(rating)}
+                    key = {props.id}
+                    onFinishRating={(rating) => handleClick(rating)}
                     style={{  }}
                 />
               );
         }
         
-    }
 }
 
 export default VoteComponent;
-const styles = StyleSheet.create({
-    container: {
-        height: 100,
-        width: '100%'
-      }
-  }
-  );
